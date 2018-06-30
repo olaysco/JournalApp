@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/save_option"
+        android:title="@string/save_option"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:onClick="saveEntry"/>
+
+    <item android:id="@+id/share_option"
+        android:title="@string/share_option_title"
+        android:orderInCategory="10"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:onClick="shareEntry"/>
+
+    <item android:id="@+id/delete_option"
+        android:title="@string/sign_out_option_title"
+        android:orderInCategory="30"
+        app:showAsAction="always"
+        android:onClick="deleteEntry"
+        android:icon="@drawable/ic_delete_red_24dp"
+        android:visible="false"/>
+
+    <item android:id="@+id/signout_option"
+        android:title="@string/sign_out_option_title"
+        android:orderInCategory="40"
+        app:showAsAction="never"
+        android:onClick="signOut" />
+
+</menu>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_toolbar"
+            app:titleTextColor="@color/colorWhite"
+            android:paddingLeft="@dimen/tool_bar_padding_left_right"
+            android:paddingRight="@dimen/tool_bar_padding_left_right">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress_bar"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <!-- This RecyclerView widget holds all Journal entry -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerViewEntry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:scrollbarSize="3dp"
+            android:scrollbarThumbVertical="@color/colorPrimary"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
+
+        <!--newEntryActivity is launched when this floating action button -->
+        <android.support.design.widget.FloatingActionButton
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:tint="@android:color/white"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

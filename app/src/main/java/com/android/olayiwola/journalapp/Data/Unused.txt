@@ -1,0 +1,207 @@
+package com.android.olayiwola.journalapp;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.android.olayiwola.journalapp.Data.JournalEntry;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements EntryAdapter.CardClickListener {
+
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mUser;
+    private RecyclerView mRecyclerView;
+    private EntryAdapter mEntryAdapter;
+    private FirebaseFirestore mFirestoreDb;
+    private FirestoreRecyclerAdapter adapter;
+    private ProgressDialog mProgressDialog;
+    private ProgressBar mProgressBar;
+    private List<JournalEntry> mjournalEntries;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirestoreDb = FirebaseFirestore.getInstance();
+        mUser = mFirebaseAuth.getCurrentUser();
+        if(mUser == null){
+            Intent loginIntent = new Intent();
+            loginIntent.setClass(this,LoginActivity.class);
+            startActivity(loginIntent);
+        }
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        //hides the App title
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //displays the app drawable logo
+        toolbar.setNavigationIcon(R.drawable.journal_app_logo);
+
+
+
+        mRecyclerView = findViewById(R.id.recyclerViewEntry);
+        mEntryAdapter = new EntryAdapter(this, this);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setSmoothScrollbarEnabled(true);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(llm);
+        //mRecyclerView.setAdapter(mEntryAdapter);
+        FloatingActionButton fabButton = findViewById(R.id.fab);
+
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create a new intent to start an AddTaskActivity
+                Intent addTaskIntent = new Intent(MainActivity.this, AddEntryActivity.class);
+                startActivity(addTaskIntent);
+            }
+        });
+
+        getAllEntries();
+
+
+    }
+
+//    private void getAllEntries() {
+//        mFirestoreDb.collection("entries").whereEqualTo("userId", mUser.getUid())
+//                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if(task.isSuccessful()){
+//                    List<JournalEntry> journalEntries = task.getResult().toObjects(JournalEntry.class);
+//                    mEntryAdapter.setData(journalEntries);
+//                    Log.d("check", String.valueOf(journalEntries.size()));
+//                }
+//            }
+//        });
+//    }
+
+Query query = mFirestoreDb.collection("entries").whereEqualTo("userId", mUser.getUid())
+                .orderBy("lastModifiedDate", Query.Direction.DESCENDING);
+        FirestoreRecyclerOptions<JournalEntry> recyclerOptions = new FirestoreRecyclerOptions.Builder<JournalEntry>()
+                .setQuery(query, JournalEntry.class).build();
+        adapter = new FirestoreRecyclerAdapter<JournalEntry, EntryViewHolder>(recyclerOptions) {
+
+            @Override
+            public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_view, parent,false);
+                return new EntryViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(EntryViewHolder holder, int position, JournalEntry model) {
+                final JournalEntry entry = mjournalEntries.get(position);
+                holder.mTitle.setText(entry.getTitle());
+                holder.mContent.setText(entry.getContent());
+                holder.mDate.setText(entry.getTitle());
+
+                holder.mCardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        updateEntry(entry);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e(MainActivity.class.getSimpleName(), e.getMessage());
+            }
+        };
+
+        adapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(adapter);
+
+    private void getAllEntries(){
+        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+        Query query = rootRef.collection("entries").whereEqualTo("userId", mUser.getUid())
+                .orderBy("lastModifiedDate", Query.Direction.DESCENDING);
+        FirestoreRecyclerOptions<JournalEntry> recyclerOptions = new FirestoreRecyclerOptions.Builder<JournalEntry>()
+                .setQuery(query, JournalEntry.class).build();
+        adapter = new FirestoreRecyclerAdapter<JournalEntry, EntryViewHolder>(recyclerOptions) {
+
+            @Override
+            public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.entry_view, parent,false);
+                return new EntryViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(EntryViewHolder holder, int position, JournalEntry model) {
+                final JournalEntry entries = mjournalEntries.get(position);
+                holder.mTitle.setText(entries.getTitle());
+                holder.mContent.setText(entries.getContent());
+                holder.mDate.setText(entries.getTitle());
+
+            }
+
+            @Override
+            public void onError(FirebaseFirestoreException e) {
+                Log.e(MainActivity.class.getSimpleName(), e.getMessage());
+            }
+        };
+
+        adapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onItemClickListener(String userId) {
+        Toast.makeText(MainActivity.this, " view clicked", Toast.LENGTH_SHORT);
+    }
+
+    public void showProgress(){
+        if(mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage("please wait!");
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    public void hideProgress(){
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+}

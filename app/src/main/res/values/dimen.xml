@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="tool_bar_padding_left_right">16dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_margin">2dp</dimen>
+    <dimen name="card_margin_1dp">2dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="logo_width">160dp</dimen>
+    <dimen name="logo_height">80dp</dimen>
+    <dimen name="entry_margin_left_right">8dp</dimen>
+    <dimen name="entry_margin_top_bottom">4dp</dimen>
+    <dimen name="enty_content_padding">2dp</dimen>
+    <dimen name="entry_content_padding">2dp</dimen>
+    <dimen name="entry_content_height">96dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+
+</resources>
