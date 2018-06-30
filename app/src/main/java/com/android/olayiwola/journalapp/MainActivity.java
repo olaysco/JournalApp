@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
     private void getAllEntries(){
         mProgressBar.setVisibility(View.VISIBLE);
         mFirestoreDb.collection("entries").whereEqualTo("userId", mUser.getUid())
+                .orderBy("lastModifiedDate", Query.Direction.DESCENDING)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
