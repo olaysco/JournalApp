@@ -7,7 +7,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+Things you need to setup for devlopment 
+
+```
+Android Studio connected with Firebase [How to setup Android studio with Firebase](https://developer.android.com/studio/write/firebase)
+```
 
 ```
 Internet conection to install required dependencies
@@ -31,9 +35,11 @@ Internet conection to install required dependencies
 ```
 
 
+
+
 ### Installing
 
-Installation steps are
+Installation steps are:
 
 ```
 - Clone or download the project to your local directory
