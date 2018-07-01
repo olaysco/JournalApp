@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     //Firebase Authentication member variable
     private FirebaseAuth mAuth;
 
-
+    //google sign in client member variable
     private GoogleSignInClient mGoogleSignInClient;
 
     //Declaration of View Items member Variable
@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         //Get Firebase auth instance
         mAuth = FirebaseAuth.getInstance();
 
+
+        //Preparing to sign user in using the Google Signin API
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.WEB_CLIENT_ID))
                 .requestEmail()
@@ -88,7 +90,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        //mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
         findViewById(R.id.sign_in_google_button).setOnClickListener(new View.OnClickListener() {
@@ -123,6 +124,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     }
 
+    /******
+     *
+     *Attempts to sign user in using email and password
+     */
     private void signInWithEmail() {
         String email = inputEmail.getText().toString();
         final String password = inputPassword.getText().toString();
@@ -184,6 +189,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
+    /******
+     *
+     *Takes a Google signed in account as parameter and pass it tp Firebase Auth
+     * @param signInAccount
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount){
         showProgress();
         AuthCredential authCredential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
@@ -204,6 +214,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         });
     }
 
+    /******
+     *
+     * Shows Progress dialog
+     * @return void
+     */
     public void showProgress(){
         if(mProgressDialog == null){
             mProgressDialog = new ProgressDialog(this);
@@ -213,6 +228,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mProgressDialog.show();
     }
 
+    /******
+     *
+     * Hides Progress dialog
+     * @return void
+     */
     public void hideProgress(){
         if(mProgressDialog != null && mProgressDialog.isShowing()){
             mProgressDialog.dismiss();

@@ -42,4 +42,5 @@
 
     <string name="WEB_CLIENT_ID">170946863461-7vbv1h40r3qi7l7nmpsgnlfni6u57khu.apps.googleusercontent.com</string>
     <string name="ANDROID_CLIENT_ID">170946863461-0igpfmear2e1ut8fb78pel8406npuej0.apps.googleusercontent.com</string>
+    <string name="empty_journal">Empty jounal click + to start writing</string>
 </resources>

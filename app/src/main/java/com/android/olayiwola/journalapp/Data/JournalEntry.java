@@ -1,5 +1,7 @@
 package com.android.olayiwola.journalapp.Data;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
 import java.util.Date;
 
 /**
@@ -13,6 +15,8 @@ public class JournalEntry {
     private String title;
     private String content;
     private Date lastModifiedDate;
+    @ServerTimestamp
+    Date createdDate;
 
     public JournalEntry(String id, String title, String content, Date lastModifiedDate) {
         this.userId = id;

@@ -9,11 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.TooltipCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.olayiwola.journalapp.Data.JournalEntry;
@@ -77,6 +79,11 @@ public class AddEntryActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //displays the app drawable logo
         toolbar.setNavigationIcon(R.drawable.journal_app_logo);
+
+        //To set user profile name in the Toolbar and display a tooltip when log pressed
+        TextView profileText = findViewById(R.id.profileName);
+        profileText.setText(mUser.getEmail());
+        TooltipCompat.setTooltipText(profileText, mUser.getEmail());
 
         mEntryContent = findViewById(R.id.new_entry_content);
         mEntryTitle = findViewById(R.id.new_entry_title);

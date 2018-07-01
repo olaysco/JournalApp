@@ -15,5 +15,6 @@
     <dimen name="entry_content_padding">2dp</dimen>
     <dimen name="entry_content_height">96dp</dimen>
     <dimen name="divider_height">1dp</dimen>
+    <dimen name="profile_name_textView_height">80dp</dimen>
 
 </resources>

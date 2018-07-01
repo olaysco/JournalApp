@@ -2,6 +2,7 @@ package com.android.olayiwola.journalapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,13 +11,17 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.TooltipCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.olayiwola.journalapp.Data.JournalEntry;
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
     private List<JournalEntry> mjournalEntries;
     private ListenerRegistration mFirestoreListener;
     private GoogleApiClient mGoogleApiClient;
+    private LinearLayout mLinearEmptyDisp;
 
 
     @Override
@@ -81,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
         mUser = mFirebaseAuth.getCurrentUser();
         mProgressBar = findViewById(R.id.progress_bar);
 
+        mLinearEmptyDisp = findViewById(R.id.emptyEntryDisplay);
+        mLinearEmptyDisp.setVisibility(View.GONE);
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -97,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
 
         mRecyclerView = findViewById(R.id.recyclerViewEntry);
         mEntryAdapter = new EntryAdapter(this, this);
+
+        //To set user profile name in the Toolbar and display a tooltip when log pressed
+        TextView profileText = findViewById(R.id.profileName);
+        profileText.setText(mUser.getEmail());
+        TooltipCompat.setTooltipText(profileText, mUser.getEmail());
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setSmoothScrollbarEnabled(true);
@@ -128,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
         //THIS CALLS THE GETALL ENTRIES METHOD TO FETCH ALL ENTRY ITEM TO THE ADAPTER
         getAllEntries();
 
-        mFirestoreListener = mFirestoreDb.collection("entries").whereEqualTo("userId", mUser.getUid())
+        mFirestoreListener = mFirestoreDb.collection("entries").orderBy("lastModifiedDate", Query.Direction.DESCENDING)
+
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -137,11 +151,15 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
                             return;
                         }
                         mjournalEntries = new ArrayList<>();
+
                         for(DocumentSnapshot doc : queryDocumentSnapshots){
                             JournalEntry journalEntry = doc.toObject(JournalEntry.class);
                             journalEntry.setId(doc.getId());
                             mjournalEntries.add(journalEntry);
                         }
+                        List<JournalEntry> userJournalEntries = getEntryForUser(mjournalEntries);
+                        checkToDisplayEmptyView(userJournalEntries);
+                        mEntryAdapter.setData(userJournalEntries);
                         mRecyclerView.setAdapter(mEntryAdapter);
                        mEntryAdapter.notifyDataSetChanged();
 
@@ -151,6 +169,26 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
 
     }
 
+    /******
+     *
+     * Checks if entry item is empty
+     * if empty it sets the Empty Entry Display LinearLayout visibility to VISIBLE
+     * else sets it to GONE
+     * @param journalEntries
+     */
+    private void checkToDisplayEmptyView(List<JournalEntry> journalEntries) {
+        TextView text = findViewById(R.id.emptyEntryDisplayText);
+        ImageView icon = findViewById(R.id.emptyEntryDisplayIcon);
+        if(journalEntries.isEmpty() || journalEntries == null){
+            mLinearEmptyDisp.setVisibility(View.VISIBLE);
+            text.setVisibility(View.VISIBLE);
+            icon.setVisibility(View.VISIBLE);
+        }else{
+            mLinearEmptyDisp.setVisibility(View.INVISIBLE);
+            text.setVisibility(View.INVISIBLE);
+            icon.setVisibility(View.INVISIBLE);
+        }
+    }
 
 
     @Override
@@ -159,23 +197,51 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
         return true;
     }
 
+    /******
+     *
+     * Gets all entries on creation of this activity
+     * and populates the adapter with data
+     */
     private void getAllEntries(){
         mProgressBar.setVisibility(View.VISIBLE);
-        mFirestoreDb.collection("entries").whereEqualTo("userId", mUser.getUid())
+        mFirestoreDb.collection("entries")
                 .orderBy("lastModifiedDate", Query.Direction.DESCENDING)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
-                    List<JournalEntry> journalEntries = task.getResult().toObjects(JournalEntry.class);
-                    mEntryAdapter.setData(journalEntries);
+                    List<JournalEntry> allJournalEntries = task.getResult().toObjects(JournalEntry.class);
+                    List<JournalEntry> userJournalEntries = getEntryForUser(allJournalEntries);
+
+                    checkToDisplayEmptyView(userJournalEntries);
+                    mEntryAdapter.setData(userJournalEntries);
                     mEntryAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mEntryAdapter);
-                    Log.d("check", String.valueOf(journalEntries.size()));
+                    Log.d("check", String.valueOf(allJournalEntries.size()));
                 }
             }
         });
+    }
+
+    /******
+     *
+     * Gets Journal Entry for user,  by matching currently signed in user Id
+     * with Id used in creating this entry
+     * Though there is a whereEqualTo method that can be used with the Firestor query but it behaves
+     * abnormally when used with orderBy
+     * @param allJournalEntries
+     * @return journalEntry
+     */
+    private List<JournalEntry> getEntryForUser(List<JournalEntry> allJournalEntries) {
+        List<JournalEntry> journalEntry = new ArrayList<>();
+        for(JournalEntry je: allJournalEntries){
+            Log.d("ids",je.getUserId()+"=="+mUser.getUid());
+            if(je.getUserId().equals(mUser.getUid())){
+                journalEntry.add(je);
+            }
+        }
+        return journalEntry;
     }
 
     /*********
