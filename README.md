@@ -8,9 +8,14 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 Things you need to setup for devlopment 
+```
+        compileSdkVersion 27
+        minSdkVersion 24
+        targetSdkVersion 27
+```
 
 ```
-Android Studio connected with Firebase [How to setup Android studio with Firebase](https://developer.android.com/studio/write/firebase)
+Android Studio connected with Firebase [How to setup Android studio with Firebase] (https://developer.android.com/studio/write/firebase)
 ```
 
 ```
@@ -72,7 +77,7 @@ feel free to contribute
 
 ## Authors
 
-* **Odunsi Olayiwola** - @olaysco
+* **Odunsi Olayiwola** - https://github.com/olaysco
 
 
 
