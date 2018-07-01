@@ -80,7 +80,7 @@ public class AddEntryActivity extends AppCompatActivity {
         //displays the app drawable logo
         toolbar.setNavigationIcon(R.drawable.journal_app_logo);
 
-        //To set user profile name in the Toolbar and display a tooltip when log pressed
+        //To set user profile name in the Toolbar and display a tooltip when long pressed
         TextView profileText = findViewById(R.id.profileName);
         profileText.setText(mUser.getEmail());
         TooltipCompat.setTooltipText(profileText, mUser.getEmail());
