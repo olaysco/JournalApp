@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +24,8 @@
             android:layout_height="@dimen/logo_height"
             android:layout_gravity="center_horizontal|top"
             android:layout_marginBottom="20dp"
-            android:src="@drawable/journal_app_logo" />
+            android:src="@drawable/journal_app_logo"
+            android:contentDescription="@string/app_logo_desc"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/button_login_margin_top"
             android:background="@color/colorWhite"
             android:text="@string/btn_login"
             android:textColor="?attr/colorPrimaryDark" />
@@ -98,7 +98,7 @@
             android:text="@string/btn_register_link"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="15dp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 

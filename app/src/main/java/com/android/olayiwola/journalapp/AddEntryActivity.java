@@ -42,23 +42,23 @@ import java.util.List;
 
 public class AddEntryActivity extends AppCompatActivity {
 
-    static final String TAG = "AddEntryActivity";
+    static final String TAG = AddEntryActivity.class.getSimpleName();
 
     public static final String UPDATE_TITLE = "JOURNAL_TITLE";
     public static final String UPDATE_CONTENT = "JOURNAL_CONTENT";
     public static final String UPDATE_DB_ID = "JOURNAL_ID";
     public ProgressDialog mProgressDialog;
 
-    EditText mEntryTitle;
-    EditText mEntryContent;
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mUser;
     private FirebaseFirestore mFirestoreDb;
-
-    Menu topMenu;
     private String db_id = null;
 
+    Menu topMenu;
     Intent intent;
+    EditText mEntryTitle;
+    EditText mEntryContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +111,7 @@ public class AddEntryActivity extends AppCompatActivity {
         mEntryContent.clearFocus();
         mEntryTitle.clearFocus();
         journalEntry.setId(db_id);
-        Log.d("Sav",db_id);
+        Log.d(TAG,"Sav "+db_id);
         mFirestoreDb.collection("entries").whereEqualTo("id", db_id)
         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 

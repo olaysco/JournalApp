@@ -7,17 +7,17 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.TooltipCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
                     mEntryAdapter.setData(userJournalEntries);
                     mEntryAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mEntryAdapter);
-                    Log.d("check", String.valueOf(allJournalEntries.size()));
+                    Log.d(TAG, "entry size "+String.valueOf(allJournalEntries.size()));
                 }
             }
         });
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
     private List<JournalEntry> getEntryForUser(List<JournalEntry> allJournalEntries) {
         List<JournalEntry> journalEntry = new ArrayList<>();
         for(JournalEntry je: allJournalEntries){
-            Log.d("ids",je.getUserId()+"=="+mUser.getUid());
+            Log.d(TAG, "ids "+je.getUserId()+"=="+mUser.getUid());
             if(je.getUserId().equals(mUser.getUid())){
                 journalEntry.add(je);
             }
@@ -258,13 +258,14 @@ public class MainActivity extends AppCompatActivity implements EntryAdapter.Card
         updateEntryIntent.putExtra(UPDATE_DATE, entry.getLastModifiedDate());
         startActivity(updateEntryIntent);
 
+
     }
 
     @Override
     public void onItemClickListener(JournalEntry entry) {
         //Toast.makeText(MainActivity.this, " view clicked", Toast.LENGTH_SHORT).show();
         updateEntry(entry);
-        Log.d(UPDATE_DB_ID,entry.getId());
+        Log.d(TAG, UPDATE_DB_ID+" "+entry.getId());
     }
 
 
